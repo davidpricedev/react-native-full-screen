@@ -49,8 +49,11 @@ public class FullScreen extends ReactContextBaseJavaModule {
         return "FullScreen";
     }
 
+    private int mOriginalSystemUiVisibility;
+
     @ReactMethod
     public void onFullScreen() {
+        mOriginalSystemUiVisibility = getCurrentActivity().getWindow().getDecorView().getSystemUiVisibility();
         UiThreadUtil.runOnUiThread(
                 new Runnable() {
                     @Override
@@ -77,9 +80,7 @@ public class FullScreen extends ReactContextBaseJavaModule {
             @Override
             public void run() {
                 getCurrentActivity().getWindow().getDecorView().setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        mOriginalSystemUiVisibility
                 );
             }
         });
