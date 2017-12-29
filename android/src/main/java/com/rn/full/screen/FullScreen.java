@@ -10,6 +10,7 @@
 package com.rn.full.screen;
 
 import android.app.Activity;
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.net.ConnectivityManagerCompat;
 import android.view.View;
+import android.os.Build;
 
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
@@ -53,12 +55,17 @@ public class FullScreen extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void onFullScreen() {
-        mOriginalSystemUiVisibility = getCurrentActivity().getWindow().getDecorView().getSystemUiVisibility();
+        final Activity activity = getCurrentActivity();
+        if (activity == null) {
+          return;
+        }
+        mOriginalSystemUiVisibility = activity.getWindow().getDecorView().getSystemUiVisibility();
         UiThreadUtil.runOnUiThread(
                 new Runnable() {
+                    @TargetApi(Build.VERSION_CODES.KITKAT)
                     @Override
                     public void run() {
-                        getCurrentActivity().getWindow().getDecorView().setSystemUiVisibility(
+                        activity.getWindow().getDecorView().setSystemUiVisibility(
                                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
